@@ -9,3 +9,4 @@ import java.util.ArrayList;
 public interface OnDownloadComplete {
     void onMoviesDownloadCompleted(ArrayList<Movie> movies);
 }
+

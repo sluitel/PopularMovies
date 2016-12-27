@@ -17,28 +17,32 @@ public class Movie implements Parcelable {
     final String THUMBNAIL_URL_BASE = "http://image.tmdb.org/t/p/";
     final String THUMBNAIL_SIZE_STRING = "w185";
 
-
+    final private String ID_PARAM = "id";
     final private String TITLE_PARAM = "original_title";
     final private String THUMBNAIL_PATH_PARAM = "poster_path";
     final private String SYNOPSIS_PARAM = "overview";
     final private String RATING_PARAM = "vote_average";
     final private String RELEASE_DATE_PARAM = "release_date";
 
-
+    int id;
     String title;
     String thumbnailPath;
     String synopsis;
     double rating;
     String releaseDate;
+    String releaseYear;
+    String length;
 
 
     public Movie(JSONObject movieInfoObject) {
         try {
+            this.id = movieInfoObject.getInt(ID_PARAM);
             this.title = movieInfoObject.getString(TITLE_PARAM);
             this.thumbnailPath = THUMBNAIL_URL_BASE + THUMBNAIL_SIZE_STRING + movieInfoObject.getString(THUMBNAIL_PATH_PARAM);
             this.synopsis = movieInfoObject.getString(SYNOPSIS_PARAM);
             this.rating = movieInfoObject.getDouble(RATING_PARAM);
             this.releaseDate = movieInfoObject.getString(RELEASE_DATE_PARAM);
+            this.releaseYear = releaseDate.substring(0, 4);
         } catch (JSONException e) {
             Log.e(LOG_TAG, e.getMessage(), e);
             e.printStackTrace();
@@ -46,11 +50,13 @@ public class Movie implements Parcelable {
     }
 
     public Movie(Parcel in) {
+        id = in.readInt();
         title = in.readString();
         thumbnailPath = in.readString();
         synopsis = in.readString();
         rating = in.readDouble();
         releaseDate = in.readString();
+        releaseYear = in.readString();
     }
 
     @Override
@@ -58,11 +64,13 @@ public class Movie implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeInt(id);
         parcel.writeString(title);
         parcel.writeString(thumbnailPath);
         parcel.writeString(synopsis);
         parcel.writeDouble(rating);
         parcel.writeString(releaseDate);
+        parcel.writeString(releaseYear);
     }
 
     public static final Parcelable.Creator<Movie> CREATOR = new Parcelable.Creator<Movie>() {
