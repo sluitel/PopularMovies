@@ -98,9 +98,6 @@ public class FetchMoviesTask extends AsyncTask<Void, Void, ArrayList<Movie>> {
 
     private URL getRequestURL() {
 
-
-
-
         String language = "en-US";
         String apiKey = "YOUR_API_KEY";
         int page = 1;
