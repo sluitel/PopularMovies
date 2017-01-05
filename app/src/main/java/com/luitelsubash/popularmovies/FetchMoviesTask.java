@@ -1,11 +1,14 @@
 package com.luitelsubash.popularmovies;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.util.Log;
+
+import com.luitelsubash.popularmovies.Data.MovieContract;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -18,6 +21,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Vector;
 
 /**
  * Created by Subash on 12/1/16.
@@ -94,6 +98,43 @@ public class FetchMoviesTask extends AsyncTask<Void, Void, ArrayList<Movie>> {
     protected void onPostExecute(ArrayList<Movie> movies) {
         super.onPostExecute(movies);
         listener.onMoviesDownloadCompleted(movies);
+        Vector<ContentValues> cVVector = new Vector<ContentValues>(movies.size());
+        for (int i = 0; i < movies.size(); i++) {
+            Movie movie = movies.get(i);
+            ContentValues movieValues = new ContentValues();
+
+            movieValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_ID, movie.id);
+            movieValues.put(MovieContract.MovieEntry.COLUMN_TITLE, movie.title);
+            movieValues.put(MovieContract.MovieEntry.COLUMN_RELEASE_DATE, movie.releaseDate);
+            movieValues.put(MovieContract.MovieEntry.COLUMN_RATING, movie.rating);
+            movieValues.put(MovieContract.MovieEntry.COLUMN_SYNOPSIS, movie.synopsis);
+            movieValues.put(MovieContract.MovieEntry.COLUMN_POSTER_URL, movie.thumbnailPath);
+            movieValues.put(MovieContract.MovieEntry.COLUMN_IS_FAVORITE, false);
+
+            cVVector.add(movieValues);
+        }
+
+        if ( cVVector.size() > 0 ) {
+            ContentValues[] cvArray = new ContentValues[cVVector.size()];
+            cVVector.toArray(cvArray);
+            context.getContentResolver().bulkInsert(MovieContract.MovieEntry.CONTENT_URI, cvArray);
+        }
+
+        Log.d(LOG_TAG, "Popular movies Service Complete. " + cVVector.size() + " Inserted");
+
+
+
+//        weatherValues.put(WeatherContract.WeatherEntry.COLUMN_LOC_KEY, locationId);
+//        weatherValues.put(WeatherContract.WeatherEntry.COLUMN_DATE, dateTime);
+//        weatherValues.put(WeatherContract.WeatherEntry.COLUMN_HUMIDITY, humidity);
+//        weatherValues.put(WeatherContract.WeatherEntry.COLUMN_PRESSURE, pressure);
+//        weatherValues.put(WeatherContract.WeatherEntry.COLUMN_WIND_SPEED, windSpeed);
+//        weatherValues.put(WeatherContract.WeatherEntry.COLUMN_DEGREES, windDirection);
+//        weatherValues.put(WeatherContract.WeatherEntry.COLUMN_MAX_TEMP, high);
+//        weatherValues.put(WeatherContract.WeatherEntry.COLUMN_MIN_TEMP, low);
+//        weatherValues.put(WeatherContract.WeatherEntry.COLUMN_SHORT_DESC, description);
+//        weatherValues.put(WeatherContract.WeatherEntry.COLUMN_WEATHER_ID, weatherId);
+
     }
 
     private URL getRequestURL() {

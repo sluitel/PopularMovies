@@ -93,5 +93,6 @@
         <item>Popularity</item>
         <item>Top Rated</item>
     </string-array>
+    <string name="content_authority">com.luitelsubash.android.popularmovies.app</string>
 
 </resources>
